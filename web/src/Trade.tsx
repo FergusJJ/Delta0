@@ -1,5 +1,6 @@
 import { useState } from "react";
 import VaultBalances from "./components/VaultBalances/VaultBalances";
+import CurrentYield from "./components/CurrentYield/CurrentYield";
 import s from "./Trade.module.css";
 
 export default function Trade() {
@@ -35,9 +36,8 @@ export default function Trade() {
 
       <div className={s.grid}>
         <div className={s.left}>
-          <div className={s.placeholderBox}>Todo: Accumulate yields chart</div>
+          <CurrentYield isLoading={isLoading} />
         </div>
-
 
         <div className={s.right}>
           <VaultBalances
@@ -45,7 +45,6 @@ export default function Trade() {
             tokens={[...tokens]}
             onRefresh={refresh}
           />
-          <div className={s.placeholderBox}>Todo: add real live data using websocket. Enable users to switch to various crypto assets</div>
         </div>
       </div>
     </div>
