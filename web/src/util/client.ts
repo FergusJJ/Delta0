@@ -1,5 +1,6 @@
 import { createThirdwebClient } from "thirdweb";
+import config from "../config/config";
 
 export const client = createThirdwebClient({
-  clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
+  clientId: config.thirdwebClientId,
 });
