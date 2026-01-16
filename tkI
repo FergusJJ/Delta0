@@ -1,0 +1,43 @@
+import requests
+
+def list_spot_market_ids():
+    url = "https://api.hyperliquid.xyz/info"
+    payload = {"type": "spotMeta"}
+
+    try:
+        response = requests.post(url, json=payload, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        SPOT_OFFSET = 10000
+
+        # Map token index -> token symbol (e.g. 0 -> USDC, 1 -> PURR, ...)
+        token_by_index = {t["index"]: t["name"] for t in data["tokens"]}
+
+        print(f"{'Trading Pair':<20} | {'64-bit Hex Asset ID'}")
+        print("-" * 46)
+
+        for m in data["universe"]:
+            idx = m["index"]
+            raw_name = m.get("name", "")
+
+            # If name is "@<n>" (non-canonical), construct BASE/QUOTE from token indices
+            if ("/" not in raw_name) and ("tokens" in m) and len(m["tokens"]) == 2:
+                base_i, quote_i = m["tokens"]
+                base = token_by_index.get(base_i, str(base_i))
+                quote = token_by_index.get(quote_i, str(quote_i))
+                pair_name = f"{base}/{quote}"
+            else:
+                pair_name = raw_name
+
+            decimal_asset_id = SPOT_OFFSET + idx
+            hex_id = f"0x{decimal_asset_id:016x}"
+
+            print(f"{pair_name:<20} | {hex_id}")
+
+    except Exception as e:
+        print(f"Error fetching metadata: {e}")
+
+if __name__ == "__main__":
+    list_spot_market_ids()
+
