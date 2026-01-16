@@ -35,7 +35,7 @@ function App() {
       <Banner />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/screen-2" element={<Screen2 />} />
+        <Route path="/trade" element={<Trade />} />
       </Routes>
       {location.pathname === "/" ? (
         <footer className={s.footer}>
