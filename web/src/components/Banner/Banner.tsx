@@ -28,6 +28,7 @@ export default function Banner() {
       <div className={s.bannerLinks}>
         <NavItem location={"/"} label={"Home"} />
         <NavItem location={"/Account"} label={"Account"} />
+        <NavItem location={"/bridge"} label={"Bridge"} />
       </div>
       <ConnectButton client={client} />
     </nav>

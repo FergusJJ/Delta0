@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { MdArrowDownward, MdArrowUpward, MdOutlineArrowOutward } from "react-icons/md";
 import { useActiveWallet, useConnectModal } from "thirdweb/react";
-import client from "./util/client";
+import client from "../../util/client";
 
-import VaultBalances from "./components/VaultBalances/VaultBalances";
-import CurrentYield from "./components/CurrentYield/CurrentYield";
-import ExchangeChart from "./components/ExchangeChart";
-import Button from "./components/Button/Button";
+import VaultBalances from "../VaultBalances/VaultBalances";
+import CurrentYield from "../CurrentYield/CurrentYield";
+import ExchangeChart from "../ExchangeChart";
+import Button from "../Button/Button";
 import s from "./Account.module.css";
 
 type VaultToken = {

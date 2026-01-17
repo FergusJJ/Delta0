@@ -1,7 +1,8 @@
 import Banner from "./components/Banner/Banner";
 import Home from "./components/Home/Home";
 import s from "./App.module.css";
-import Account from "./Account";
+import Account from "./components/Account/Account";
+import Bridge from "./components/Bridge/Bridge";
 import { Route, Routes } from "react-router-dom";
 /*
  * Need:
@@ -29,6 +30,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/bridge" element={<Bridge />} />
       </Routes>
 
       {/* location.pathname === "/" ? (
