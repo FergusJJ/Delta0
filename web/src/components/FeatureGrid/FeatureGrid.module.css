@@ -28,13 +28,14 @@
 .grid {
   display: grid;
   position: relative;
+  align-items: stretch;
 }
 
 .gridItem {
   position: relative;
 }
 
-/* Vertical dividers that extend past content */
+/* Vertical dividers for horizontal layout */
 .gridItem::after {
   content: "";
   position: absolute;
@@ -47,4 +48,28 @@
 
 .gridItem:last-child::after {
   display: none;
+}
+
+/* Vertical layout styles */
+.gridWrapper[data-direction="vertical"] {
+  height: 100%;
+}
+
+.gridWrapper[data-direction="vertical"] .grid {
+  height: 100%;
+}
+
+.gridWrapper[data-direction="vertical"] .gridItem {
+  display: flex;
+  align-items: center;
+}
+
+/* Vertical layout: horizontal dividers between items */
+.gridWrapper[data-direction="vertical"] .gridItem::after {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: auto;
+  height: 1px;
 }
