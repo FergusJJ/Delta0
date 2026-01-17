@@ -13,7 +13,7 @@ export default function GetStarted() {
       void handleConnect();
       return;
     }
-    navigate("/trade");
+    navigate("/account");
   };
   const handleConnect = async () => {
     const wallet = await connect({ client }); // opens the connect modal

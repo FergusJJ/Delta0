@@ -31,14 +31,14 @@ export default function VaultBalances({
     if (isLoading) return "Loading balances…";
     if (error) return "Couldn’t load balances";
     if (!hasTokens) return "No tokens in vault yet";
-    return "Your vault holdings";
+    return "Your balances";
   }, [isLoading, error, hasTokens]);
 
   return (
     <section className={s.card}>
       <div className={s.header}>
         <div>
-          <h2 className={s.title}>Vault</h2>
+          <h2 className={s.title}>Balances</h2>
           <p className={s.subtitle}>{subtitle}</p>
         </div>
 
