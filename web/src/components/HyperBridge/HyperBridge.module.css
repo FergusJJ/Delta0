@@ -1,0 +1,344 @@
+.container {
+  padding: 24px;
+  min-height: calc(100vh - 80px);
+}
+
+.title {
+  margin: 0 0 24px 0;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: -16px 0 24px 0;
+  color: rgba(148, 163, 184, 0.95);
+  font-size: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(420px, 500px) 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.widgetColumn {
+  /* Allow widget to expand naturally without clipping */
+  min-width: 0;
+  overflow: visible;
+}
+
+/* Override LI.FI widget internal height constraints */
+.widgetColumn :global([class*="MuiBox-root"]),
+.widgetColumn :global([class*="WidgetContainer"]),
+.widgetColumn :global(> div),
+.widgetColumn :global(> div > div) {
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.infoColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Progress Component */
+.progressContainer {
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.progressTitle {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressEmpty,
+.progressLoading {
+  margin: 0;
+  color: rgba(148, 163, 184, 0.7);
+  font-size: 14px;
+}
+
+.statusBadgeCompleted {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(0, 200, 83, 0.15);
+  color: #00c853;
+}
+
+.statusBadgeFailed {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.statusBadgeExecuting {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(124, 58, 237, 0.15);
+  color: #a78bfa;
+}
+
+.errorMessage {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 13px;
+}
+
+.stepsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.stepItem {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.stepIconWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px;
+}
+
+.stepIconPending,
+.stepIconActive,
+.stepIconCompleted,
+.stepIconFailed {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.stepIconPending {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.stepIconActive {
+  background: rgba(124, 58, 237, 0.2);
+  color: #a78bfa;
+  animation: pulse 1.5s infinite;
+}
+
+.stepIconCompleted {
+  background: rgba(0, 200, 83, 0.2);
+  color: #00c853;
+}
+
+.stepIconFailed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.stepConnector {
+  width: 2px;
+  flex: 1;
+  min-height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 4px 0;
+}
+
+.stepContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.stepType {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.stepTool {
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.stepDetails {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.stepToken {
+  font-weight: 500;
+}
+
+.stepArrow {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.stepChains {
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.txLink {
+  font-size: 12px;
+  color: #a78bfa;
+  text-decoration: none;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.txLink:hover {
+  text-decoration: underline;
+}
+
+/* Route Details Component */
+.routeContainer {
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.routeTitle {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.routeEmpty {
+  margin: 0;
+  color: rgba(148, 163, 184, 0.7);
+  font-size: 14px;
+}
+
+.routeGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.routeItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.routeLabel {
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.routeValue {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.routeChain {
+  font-size: 13px;
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.routeArrow {
+  font-size: 18px;
+  color: rgba(148, 163, 184, 0.4);
+  text-align: center;
+  padding: 4px 0;
+}
+
+.routeStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.routeStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.routeStatLabel {
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.6);
+}
+
+.routeStatValue {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Connect Gate */
+.connectGate {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.connectTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.connectSub {
+  margin: 0;
+  max-width: 520px;
+  color: rgba(148, 163, 184, 0.95);
+}
