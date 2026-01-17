@@ -28,43 +28,14 @@ const tokenWhitelist: BaseToken[] = [
     chainId: ChainId.HYP,
   },
 ];
-//
-// keep in sync with getChainNameFromId
-const chainWhitelist: Array<ChainId> = [
-  ChainId.ETH, // Ethereum
-  ChainId.POL, // Polygon
-  ChainId.BSC, // BNB Chain
-  ChainId.ARB, // Arbitrum
-  ChainId.OPT, // Optimism
-  ChainId.BAS, // Base
-  ChainId.AVA, // Avalanche
-  ChainId.LNA, // Linea
-  ChainId.ERA, // zkSync Era
-  ChainId.SCL, // Scroll
-  ChainId.BLS, // Blast
-  ChainId.MNT, // Mantle
-  ChainId.DAI, // Gnosis
-
-  ChainId.HYP,
-
-  // Non-EVM
-  ChainId.SOL,
-  ChainId.BTC,
-  ChainId.SUI,
-];
-
-//const testnetWhitelist: Array<TestnetChainId> = [
-//  TestnetChainId.SEP,
-//  TestnetChainId.HYPE_T,
-//];
 
 // Docs: https://docs.li.fi/widget/configure-widget
 const widgetConfig: WidgetConfig = {
   integrator: INTEGRATOR,
   toChain: ChainId.HYP,
   chains: {
-    allow: [], // [...testnetWhitelist], //[...chainWhitelist, ...testnetWhitelist],
-    deny: [], // Allow all chains as source
+    allow: [],
+    deny: [],
   },
   tokens: {
     // allow to eth, btc, sol on HYP
@@ -76,7 +47,6 @@ const widgetConfig: WidgetConfig = {
     },
   },
   // Docs: https://docs.li.fi/widget/configuration/widget-configuration#hidden-ui
-  // hiddenUI: ["toAddress"], // Hide toAddress since we auto-set it
   appearance: "dark",
   variant: "compact",
   // https://docs.li.fi/widget/select-widget-variants
@@ -84,13 +54,23 @@ const widgetConfig: WidgetConfig = {
   // Docs: https://docs.li.fi/widget/configure-widget/widget-configuration#theme
   theme: {
     palette: {
-      primary: { main: "#00c853" },
-      secondary: { main: "#7c3aed" },
+      primary: { main: "#78FFDC" },
+      secondary: { main: "#0d1210" },
+      background: {
+        default: "#070b09",
+        paper: "#0d1210",
+      },
+      text: {
+        primary: "#fafafa",
+        secondary: "#8a8d8b",
+      },
+    },
+    typography: {
+      fontFamily: "'Unbounded', system-ui, -apple-system, sans-serif",
     },
     container: {
       boxShadow: "none",
       borderRadius: "16px",
-      // Remove default max height to allow full expansion
       maxHeight: "none",
       height: "auto",
     },
