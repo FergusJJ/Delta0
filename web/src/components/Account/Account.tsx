@@ -11,8 +11,13 @@ import {
 } from "thirdweb/react";
 import { parseUnits } from "viem";
 import client from "../../util/client";
-import { useDeposit, useWithdraw } from "../../hooks/useVaultContract";
-import { hyperEVM } from "../../config/chains";
+import {
+  useDeposit,
+  useWithdraw,
+  readUserTVL,
+  readTVUMUsdc,
+  readTokenBalance,
+} from "../../hooks/useVaultContract";
 
 import VaultBalances from "../VaultBalances/VaultBalances";
 import CurrentYield from "../CurrentYield/CurrentYield";
@@ -21,9 +26,7 @@ import Button from "../Button/Button";
 import s from "./Account.module.css";
 import type { ContractSymbol } from "src/contracts/vault";
 import TokenNameAdressMapping from "@constants/tokens";
-import { ChainId, getTokenBalances } from "@lifi/sdk";
-import { useTokenPrices } from "../../hooks/useTokenPrices";
-import { sendVaultStatus } from "@components/Bridge/utils/balanceApi";
+import { ChainId } from "@lifi/sdk";
 
 type VaultToken = {
   symbol: string;
@@ -36,13 +39,11 @@ const TOKEN_CATALOG: Array<{
   address: `0x${string}`;
   decimals: number;
 }> = [
-  //{ symbol: "SOL", address: TokenNameAdressMapping[ChainId.HYP]["USOL"], decimals: 18 },
   {
     symbol: "ETH",
     address: TokenNameAdressMapping[ChainId.HYP]["UETH"],
     decimals: 18,
   },
-  //{ symbol: "BTC", address: TokenNameAdressMapping[ChainId.HYP]["UBTC"], decimals: 18 },
 ];
 
 const formatAmount = (x: number) => {
@@ -86,98 +87,62 @@ export default function Account() {
 }
 
 function AccountAuthed() {
-  const prices = useTokenPrices();
   const account = useActiveAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [chainId] = useState(hyperEVM.id);
 
-  const { deposit, isPending: isDepositing } = useDeposit(chainId);
-  const { withdraw, isPending: isWithdrawing } = useWithdraw(chainId);
+  const { deposit, isPending: isDepositing } = useDeposit();
+  const { withdraw, isPending: isWithdrawing } = useWithdraw();
 
-  // Raw token balances (in token units, not USD)
-  const [balances, setBalances] = useState<Record<`0x${string}`, number>>({
-    // [TokenNameAdressMapping[ChainId.HYP]["USOL"]]: 0, // dummy data
-    [TokenNameAdressMapping[ChainId.HYP]["UETH"]]: 0, // dummy data
-    // [TokenNameAdressMapping[ChainId.HYP]["UBTC"]]: 0, // dummy data
-  });
+  // On-chain values
+  const [userTVL, setUserTVL] = useState<bigint>(0n);
+  const [totalUSDCUnderManagement, setTotalUSDCUnderManagement] =
+    useState<bigint>(0n);
+
+  useEffect(() => {
+    const fetchContractData = async () => {
+      try {
+        const tvum = await readTVUMUsdc();
+        setTotalUSDCUnderManagement(tvum);
+      } catch (err) {
+        console.error("Failed to fetch contract data:", err);
+      }
+    };
+    void fetchContractData();
+  }, []);
 
   useEffect(() => {
     if (!account?.address) {
-      setBalances({
-        //      [TokenNameAdressMapping[ChainId.HYP]["USOL"]]: 0,
-        [TokenNameAdressMapping[ChainId.HYP]["UETH"]]: 0,
-        //   [TokenNameAdressMapping[ChainId.HYP]["UBTC"]]: 0,
-      });
+      setUserTVL(0n);
       return;
     }
-
-    const getBalances = async () => {
-      const promises = [
-        //sendVaultStatus({
-        //  tokenAddress: TokenNameAdressMapping[ChainId.HYP]["USOL"],
-        //  walletAddress: account.address as `0x${string}`,
-        //  amount: 0,
-        //}),
-        sendVaultStatus({
-          tokenAddress: TokenNameAdressMapping[ChainId.HYP]["UETH"],
-          walletAddress: account.address as `0x${string}`,
-          amount: 0,
-        }),
-        //sendVaultStatus({
-        //  tokenAddress: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
-        //  walletAddress: account.address as `0x${string}`,
-        //  amount: 0,
-        //}),
-      ];
-      const resp = await Promise.all(promises);
-      setBalances(
-        resp.reduce(
-          (acc, { tokenAddress, amount }) => ({
-            ...acc,
-            [tokenAddress]: amount,
-          }),
-          {} as Record<`0x${string}`, number>,
-        ),
-      );
+    const fetchUserTVL = async () => {
+      try {
+        const tvl = await readUserTVL(account.address);
+        setUserTVL(tvl);
+      } catch (err) {
+        console.error("Failed to fetch user TVL:", err);
+      }
     };
-    void getBalances();
-  }, [account]);
+    void fetchUserTVL();
+  }, [account?.address]);
 
-  // Derive vault holdings (USD values) from balances and prices
+  // Derive vault holdings (USD values) from userTVL
   const vaultHoldings = useMemo<VaultToken[]>(() => {
-    const ethMeta = TOKEN_CATALOG.find((t) => t.symbol === "ETH");
-    const ethBalance = ethMeta
-      ? (balances[ethMeta.address] ?? 0) / 10 ** ethMeta.decimals
-      : 0;
-
+    // userTVL is in USDC decimals (6)
+    const userTVLInUsdc = Number(userTVL) / 1e6;
     return [
-      //      {
-      //        symbol: "SOL (in USDC)",
-      //        address: TokenNameAdressMapping[ChainId.HYP]["USOL"],
-      //        amount: solBalance * (prices["SOL"] ?? 0),
-      //      },
       {
         symbol: "ETH (in USDC)",
         address: TokenNameAdressMapping[ChainId.HYP]["UETH"],
-        amount: ethBalance * (prices["ETH"] ?? 0),
+        amount: userTVLInUsdc,
       },
-      //      {
-      //        symbol: "BTC (in USDC)",
-      //        address: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
-      //        amount: btcBalance * (prices["BTC"] ?? 0),
-      //      },
     ];
-  }, [balances, prices]);
+  }, [userTVL]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState<"deposit" | "withdraw">("deposit");
   const [selectedSymbol, setSelectedSymbol] = useState(TOKEN_CATALOG[0].symbol);
   const [amountStr, setAmountStr] = useState("0");
-
-  //  const totalUsdcValue = useMemo(
-  //    () => vaultHoldings.reduce((sum, t) => sum + t.amount, 0),
-  //    [vaultHoldings],
-  //  );
 
   const tokensForDisplay = useMemo(
     () =>
@@ -214,36 +179,17 @@ function AccountAuthed() {
 
     const tokenMeta = TOKEN_CATALOG.find((t) => t.symbol === selectedSymbol);
     if (!tokenMeta) return;
-
     try {
       const amountInWei = parseUnits(amountStr, 18);
-
-      let totals: { tokenAddress: `0x${string}`; amount: number };
       if (mode === "deposit") {
         await deposit(amountInWei, selectedSymbol);
-        totals = await sendVaultStatus({
-          tokenAddress: tokenMeta.address,
-          walletAddress: account.address as `0x${string}`,
-          amount: amt,
-        });
       } else {
         await withdraw(amountInWei, selectedSymbol);
-        totals = await sendVaultStatus({
-          tokenAddress: tokenMeta.address,
-          walletAddress: account.address as `0x${string}`,
-          amount: -amt,
-        });
       }
-
-      // Update raw balances with the totals returned from the backend
-      setBalances((prev) => ({
-        ...prev,
-        [totals.tokenAddress]: totals.amount,
-      }));
-
       handleCloseModal();
     } catch (err) {
       console.error("Transaction failed:", err);
+      handleCloseModal();
     }
   };
 
@@ -272,23 +218,11 @@ function AccountAuthed() {
     }
 
     const fetchBalance = async () => {
-      const tok = {
-        chainId: 999,
-        address: "0xbe6727b535545c67d5caa73dea54865b92cf7907",
-        symbol: "UETH",
-        name: "UETH",
-        decimals: 18,
-        priceUSD: "0",
-      };
       try {
-        const result = await getTokenBalances(account.address, [tok]);
-        if (result && result.length > 0) {
-          const tokenData = result[0];
-          const rawBalance = BigInt(tokenData.amount ?? "0");
-          const decimals = tokenData.decimals ?? 18;
-          const balance = Number(rawBalance) / 10 ** decimals;
-          setSelectedTokenBalance(balance);
-        }
+        const rawBalance = await readTokenBalance(account.address, "ETH");
+        // UETH has 18 decimals
+        const balance = Number(rawBalance) / 1e18;
+        setSelectedTokenBalance(balance);
       } catch (err) {
         console.error("Failed to fetch token balance:", err);
         setSelectedTokenBalance(0);
@@ -332,7 +266,16 @@ function AccountAuthed() {
 
       <div className={s.grid}>
         <div className={s.left}>
-          <CurrentYield isLoading={isLoading} />
+          <CurrentYield
+            isLoading={isLoading}
+            fundingRate={0.0125 * 0.63} // TODO: pass actual value
+            daily={0.0375 * 0.72}
+            weekly={0.2625 * 0.72}
+            monthly={1.125 * 0.72}
+            tvl="$12.4M"
+            apy={13.5}
+            totalUSDCUnderManagement={totalUSDCUnderManagement}
+          />
         </div>
 
         <div className={s.right}>
@@ -348,6 +291,7 @@ function AccountAuthed() {
               isLoading={isLoading}
               tokens={tokensForDisplay}
               onRefresh={handleRefresh}
+              userTVL={userTVL}
             />
 
             <div

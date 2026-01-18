@@ -1,4 +1,4 @@
- import { useMemo } from "react";
+import { useMemo } from "react";
 import s from "./VaultBalances.module.css";
 
 /**
@@ -9,7 +9,7 @@ import s from "./VaultBalances.module.css";
 type VaultTokenBalance = {
   symbol: string;
   address: `0x${string}`;
-  amount: string; 
+  amount: string;
 };
 
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
   error?: string | null;
   tokens?: VaultTokenBalance[];
   onRefresh?: () => void;
+  userTVL?: bigint;
 };
 
 export default function VaultBalances({
@@ -43,7 +44,11 @@ export default function VaultBalances({
         </div>
 
         {onRefresh && (
-          <button className={s.refreshBtn} onClick={onRefresh} disabled={isLoading}>
+          <button
+            className={s.refreshBtn}
+            onClick={onRefresh}
+            disabled={isLoading}
+          >
             Refresh
           </button>
         )}
@@ -74,7 +79,9 @@ export default function VaultBalances({
           ) : (
             <div className={s.empty}>
               Deposit funds to see them here.
-              <div className={s.emptyHint}>Tip: show a “Deposit” button next.</div>
+              <div className={s.emptyHint}>
+                Tip: show a “Deposit” button next.
+              </div>
             </div>
           )}
         </div>

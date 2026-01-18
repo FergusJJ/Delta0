@@ -12,14 +12,12 @@ export function useTokenPrices() {
       });
       const mids = await res.json();
       setPrices({
-        BTC: parseFloat(mids["BTC"] || "0"),
         ETH: parseFloat(mids["ETH"] || "0"),
-        SOL: parseFloat(mids["SOL"] || "0"),
       });
     };
 
     fetchPrices();
-    const interval = setInterval(fetchPrices, 30000);
+    const interval = setInterval(fetchPrices, 60000);
     return () => clearInterval(interval);
   }, []);
 
