@@ -29,8 +29,24 @@ export default function HyperBridgeWidget() {
       config={{
         ...widgetConfig,
         tokens: {
-          to: { allow: widgetTokenConfig },
-          from: { allow: widgetTokenConfig },
+          to: {
+            allow: [
+              ...widgetTokenConfig,
+              {
+                chainId: 999,
+                address: "0xbe6727b535545c67d5caa73dea54865b92cf7907",
+              },
+            ],
+          },
+          from: {
+            allow: [
+              ...widgetTokenConfig,
+              {
+                chainId: 999,
+                address: "0xbe6727b535545c67d5caa73dea54865b92cf7907",
+              },
+            ],
+          },
         },
       }}
       formRef={formRef}

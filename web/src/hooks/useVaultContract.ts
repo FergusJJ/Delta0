@@ -9,6 +9,7 @@ import { getVaultContract, type ContractSymbol } from "../contracts/vault";
  *   switch statement and then returns the correct abi
  * */
 
+// amount must have correct decimals, i.e. 1 eth is 1e18
 export function useDeposit(chainId: number) {
   const { mutateAsync: sendTx, isPending, error } = useSendTransaction();
 
@@ -19,12 +20,7 @@ export function useDeposit(chainId: number) {
     );
     const tx = prepareContractCall({
       contract,
-      // TODO: Update method name to match your contract's deposit function.
-      // This must match a function name in VAULT_ABI (e.g., "deposit", "stake", "supply").
-      method: "setNumber", // "deposit",
-      // TODO: Update params to match your contract's function signature.
-      // Current: deposit(uint256 amount)
-      // If your function takes different params, update accordingly.
+      method: "deposit", // "deposit",
       params: [amount],
     });
     return sendTx(tx);
@@ -43,12 +39,7 @@ export function useWithdraw(chainId: number) {
     );
     const tx = prepareContractCall({
       contract,
-      // TODO: Update method name to match your contract's withdraw function.
-      // This must match a function name in VAULT_ABI (e.g., "withdraw", "unstake", "redeem").
-      method: "increment", // "withdraw",
-      // TODO: Update params to match your contract's function signature.
-      // Current: withdraw(uint256 amount)
-      // If your function takes different params, update accordingly.
+      method: "withdraw",
       params: [amount],
     });
     return sendTx(tx);

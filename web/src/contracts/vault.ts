@@ -11,25 +11,432 @@ export type ContractSymbol = "SOL" | "ETH" | "BTC";
 
 export const VAULT_ABI = [
   {
-    type: "function",
-    name: "increment",
-    inputs: [],
-    outputs: [],
+    type: "constructor",
+    inputs: [
+      { name: "Name", type: "string", internalType: "string" },
+      { name: "Ticker", type: "string", internalType: "string" },
+    ],
     stateMutability: "nonpayable",
   },
   {
     type: "function",
-    name: "number",
+    name: "ACCOUNT_MARGIN_SUMMARY_PRECOMPILE_ADDRESS",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "BBO_PRECOMPILE_ADDRESS",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "Owner",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "POSITION_PRECOMPILE_ADDRESS",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "RouterAddress",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "Token",
+    inputs: [],
+    outputs: [{ name: "", type: "address", internalType: "contract IERC20" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "accountMarginSummary",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "tuple",
+        internalType: "struct Delta0_ETH.AccountMarginSummary",
+        components: [
+          { name: "accountValue", type: "int64", internalType: "int64" },
+          { name: "marginUsed", type: "uint64", internalType: "uint64" },
+          { name: "ntlPos", type: "uint64", internalType: "uint64" },
+          { name: "rawUsd", type: "int64", internalType: "int64" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "allowance",
+    inputs: [
+      { name: "owner", type: "address", internalType: "address" },
+      { name: "spender", type: "address", internalType: "address" },
+    ],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "amountLongOnHyperEVM",
     inputs: [],
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
     type: "function",
-    name: "setNumber",
-    inputs: [{ name: "newNumber", type: "uint256", internalType: "uint256" }],
+    name: "amountShortOnHyperCore",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "approve",
+    inputs: [
+      { name: "spender", type: "address", internalType: "address" },
+      { name: "value", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "balanceOf",
+    inputs: [{ name: "account", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "coreValueUSDC",
+    inputs: [],
+    outputs: [{ name: "", type: "uint64", internalType: "uint64" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "decimals",
+    inputs: [],
+    outputs: [{ name: "", type: "uint8", internalType: "uint8" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "deposit",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "getTokenBalance",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "name",
+    inputs: [],
+    outputs: [{ name: "", type: "string", internalType: "string" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "nextRebalanceisA",
+    inputs: [],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "position",
+    inputs: [
+      { name: "user", type: "address", internalType: "address" },
+      { name: "perp", type: "uint16", internalType: "uint16" },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "tuple",
+        internalType: "struct Delta0_ETH.Position",
+        components: [
+          { name: "szi", type: "int64", internalType: "int64" },
+          { name: "entryNtl", type: "uint64", internalType: "uint64" },
+          { name: "isolatedRawUsd", type: "int64", internalType: "int64" },
+          { name: "leverage", type: "uint32", internalType: "uint32" },
+          { name: "isIsolated", type: "bool", internalType: "bool" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "rebalance",
+    inputs: [
+      { name: "leverageNumerator", type: "uint256", internalType: "uint256" },
+      { name: "leverageDenominator", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [
+      { name: "", type: "uint256", internalType: "uint256" },
+      { name: "", type: "uint256", internalType: "uint256" },
+      { name: "", type: "bool", internalType: "bool" },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "sendToHyperCore",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "shouldIncreaseCollateral",
+    inputs: [],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "symbol",
+    inputs: [],
+    outputs: [{ name: "", type: "string", internalType: "string" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "takeFromHyperCore",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "totalSupply",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "totalUSDCValueStoredInToken",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "totalUSDCValueUnderManagement",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "transfer",
+    inputs: [
+      { name: "to", type: "address", internalType: "address" },
+      { name: "value", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "transferFrom",
+    inputs: [
+      { name: "from", type: "address", internalType: "address" },
+      { name: "to", type: "address", internalType: "address" },
+      { name: "value", type: "uint256", internalType: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "valueLockedByUser",
+    inputs: [{ name: "user", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "valueOfTokenUsdc",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "withdraw",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "withdrawalMultiplier",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "yieldMultiplier",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "event",
+    name: "Approval",
+    inputs: [
+      {
+        name: "owner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "spender",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "value",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Transfer",
+    inputs: [
+      { name: "from", type: "address", indexed: true, internalType: "address" },
+      { name: "to", type: "address", indexed: true, internalType: "address" },
+      {
+        name: "value",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
+  },
+  { type: "error", name: "CoreWriterLib__CannotSelfTransfer", inputs: [] },
+  {
+    type: "error",
+    name: "CoreWriterLib__CoreAmountTooLarge",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+  },
+  {
+    type: "error",
+    name: "CoreWriterLib__EvmAmountTooSmall",
+    inputs: [{ name: "amount", type: "uint256", internalType: "uint256" }],
+  },
+  { type: "error", name: "CoreWriterLib__HypeTransferFailed", inputs: [] },
+  {
+    type: "error",
+    name: "ERC20InsufficientAllowance",
+    inputs: [
+      { name: "spender", type: "address", internalType: "address" },
+      { name: "allowance", type: "uint256", internalType: "uint256" },
+      { name: "needed", type: "uint256", internalType: "uint256" },
+    ],
+  },
+  {
+    type: "error",
+    name: "ERC20InsufficientBalance",
+    inputs: [
+      { name: "sender", type: "address", internalType: "address" },
+      { name: "balance", type: "uint256", internalType: "uint256" },
+      { name: "needed", type: "uint256", internalType: "uint256" },
+    ],
+  },
+  {
+    type: "error",
+    name: "ERC20InvalidApprover",
+    inputs: [{ name: "approver", type: "address", internalType: "address" }],
+  },
+  {
+    type: "error",
+    name: "ERC20InvalidReceiver",
+    inputs: [{ name: "receiver", type: "address", internalType: "address" }],
+  },
+  {
+    type: "error",
+    name: "ERC20InvalidSender",
+    inputs: [{ name: "sender", type: "address", internalType: "address" }],
+  },
+  {
+    type: "error",
+    name: "ERC20InvalidSpender",
+    inputs: [{ name: "spender", type: "address", internalType: "address" }],
+  },
+  {
+    type: "error",
+    name: "HLConversions__InvalidToken",
+    inputs: [{ name: "token", type: "uint64", internalType: "uint64" }],
+  },
+  {
+    type: "error",
+    name: "PrecompileLib__AccountMarginSummaryPrecompileFailed",
+    inputs: [],
+  },
+  { type: "error", name: "PrecompileLib__MarkPxPrecompileFailed", inputs: [] },
+  {
+    type: "error",
+    name: "PrecompileLib__PerpAssetInfoPrecompileFailed",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "PrecompileLib__PositionPrecompileFailed",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "PrecompileLib__SpotBalancePrecompileFailed",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "PrecompileLib__TokenInfoPrecompileFailed",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "SafeCastOverflowedUintDowncast",
+    inputs: [
+      { name: "bits", type: "uint8", internalType: "uint8" },
+      { name: "value", type: "uint256", internalType: "uint256" },
+    ],
+  },
+  {
+    type: "error",
+    name: "SafeERC20FailedOperation",
+    inputs: [{ name: "token", type: "address", internalType: "address" }],
   },
 ] as const;
 
@@ -42,7 +449,7 @@ export const VAULT_ADDRESSES: Record<
   // TODO: Set mainnet address after deploying to HyperEVM mainnet (chain ID 999)
   [hyperEVM.id]: {
     ["SOL"]: "0x0",
-    ["ETH"]: "0x0",
+    ["ETH"]: "0xbe6727b535545c67d5caa73dea54865b92cf7907",
     ["BTC"]: "0x0",
   },
   // TODO: Set testnet address after deploying to HyperEVM testnet (chain ID 998)
@@ -55,6 +462,7 @@ export const VAULT_ADDRESSES: Record<
 
 export function getVaultContract(chainId: number, symbol: ContractSymbol) {
   const chain = chainId === hyperEVMTestnet.id ? hyperEVMTestnet : hyperEVM;
+  console.log('"');
   const address = VAULT_ADDRESSES[chainId][symbol];
 
   if (!address) {

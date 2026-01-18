@@ -149,6 +149,12 @@
   color: var(--text-primary);
 }
 
+.balanceValue {
+  font-size: 14px;
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
 .modalActions {
   display: flex;
   justify-content: flex-end;

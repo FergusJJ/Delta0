@@ -12,7 +12,7 @@ import {
 import { parseUnits } from "viem";
 import client from "../../util/client";
 import { useDeposit, useWithdraw } from "../../hooks/useVaultContract";
-import { hyperEVMTestnet } from "../../config/chains";
+import { hyperEVM, hyperEVMTestnet } from "../../config/chains";
 
 import VaultBalances from "../VaultBalances/VaultBalances";
 import CurrentYield from "../CurrentYield/CurrentYield";
@@ -33,9 +33,9 @@ type VaultToken = {
 
 const TOKEN_CATALOG: Array<{ symbol: ContractSymbol; address: `0x${string}` }> =
   [
-    { symbol: "SOL", address: TokenNameAdressMapping[ChainId.HYP]["USOL"] },
+    //{ symbol: "SOL", address: TokenNameAdressMapping[ChainId.HYP]["USOL"] },
     { symbol: "ETH", address: TokenNameAdressMapping[ChainId.HYP]["UETH"] },
-    { symbol: "BTC", address: TokenNameAdressMapping[ChainId.HYP]["UBTC"] },
+    //{ symbol: "BTC", address: TokenNameAdressMapping[ChainId.HYP]["UBTC"] },
   ];
 
 const formatAmount = (x: number) =>
@@ -80,24 +80,24 @@ function AccountAuthed() {
   const prices = useTokenPrices();
   const account = useActiveAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [chainId] = useState(hyperEVMTestnet.id); // Use testnet by default
+  const [chainId] = useState(hyperEVM.id);
 
   const { deposit, isPending: isDepositing } = useDeposit(chainId);
   const { withdraw, isPending: isWithdrawing } = useWithdraw(chainId);
 
   // Raw token balances (in token units, not USD)
   const [balances, setBalances] = useState<Record<`0x${string}`, number>>({
-    [TokenNameAdressMapping[ChainId.HYP]["USOL"]]: 0, // dummy data
+    // [TokenNameAdressMapping[ChainId.HYP]["USOL"]]: 0, // dummy data
     [TokenNameAdressMapping[ChainId.HYP]["UETH"]]: 0, // dummy data
-    [TokenNameAdressMapping[ChainId.HYP]["UBTC"]]: 0, // dummy data
+    // [TokenNameAdressMapping[ChainId.HYP]["UBTC"]]: 0, // dummy data
   });
 
   useEffect(() => {
     if (!account?.address) {
       setBalances({
-        [TokenNameAdressMapping[ChainId.HYP]["USOL"]]: 0,
+        //      [TokenNameAdressMapping[ChainId.HYP]["USOL"]]: 0,
         [TokenNameAdressMapping[ChainId.HYP]["UETH"]]: 0,
-        [TokenNameAdressMapping[ChainId.HYP]["UBTC"]]: 0,
+        //   [TokenNameAdressMapping[ChainId.HYP]["UBTC"]]: 0,
       });
       return;
     }
@@ -137,13 +137,13 @@ function AccountAuthed() {
   // Derive vault holdings (USD values) from balances and prices
   const vaultHoldings = useMemo<VaultToken[]>(
     () => [
-      {
-        symbol: "SOL (in USDC)",
-        address: TokenNameAdressMapping[ChainId.HYP]["USOL"],
-        amount:
-          (balances[TokenNameAdressMapping[ChainId.HYP]["USOL"]] ?? 0) *
-          (prices["SOL"] ?? 0),
-      },
+      //      {
+      //        symbol: "SOL (in USDC)",
+      //        address: TokenNameAdressMapping[ChainId.HYP]["USOL"],
+      //        amount:
+      //          (balances[TokenNameAdressMapping[ChainId.HYP]["USOL"]] ?? 0) *
+      //          (prices["SOL"] ?? 0),
+      //      },
       {
         symbol: "ETH (in USDC)",
         address: TokenNameAdressMapping[ChainId.HYP]["UETH"],
@@ -151,13 +151,13 @@ function AccountAuthed() {
           (balances[TokenNameAdressMapping[ChainId.HYP]["UETH"]] ?? 0) *
           (prices["ETH"] ?? 0),
       },
-      {
-        symbol: "BTC (in USDC)",
-        address: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
-        amount:
-          (balances[TokenNameAdressMapping[ChainId.HYP]["UBTC"]] ?? 0) *
-          (prices["BTC"] ?? 0),
-      },
+      //      {
+      //        symbol: "BTC (in USDC)",
+      //        address: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
+      //        amount:
+      //          (balances[TokenNameAdressMapping[ChainId.HYP]["UBTC"]] ?? 0) *
+      //          (prices["BTC"] ?? 0),
+      //      },
     ],
     [balances, prices],
   );
@@ -255,6 +255,13 @@ function AccountAuthed() {
   const modalTitle =
     mode === "deposit" ? "Deposit to Vault" : "Withdraw from Vault";
   const isPending = isDepositing || isWithdrawing;
+
+  // Get the balance for the currently selected token in the modal
+  const selectedTokenBalance = useMemo(() => {
+    const tokenMeta = TOKEN_CATALOG.find((t) => t.symbol === selectedSymbol);
+    if (!tokenMeta) return 0;
+    return balances[tokenMeta.address] ?? 0;
+  }, [selectedSymbol, balances]);
   const actionLabel = isPending
     ? "Confirming..."
     : mode === "deposit"
@@ -362,6 +369,13 @@ function AccountAuthed() {
                 onChange={handleAmountChange}
                 placeholder="0.0"
               />
+            </div>
+
+            <div className={s.formRow}>
+              <label className={s.label}>Your Balance</label>
+              <span className={s.balanceValue}>
+                {formatAmount(selectedTokenBalance)} u{selectedSymbol}
+              </span>
             </div>
 
             <div className={s.modalActions}>
