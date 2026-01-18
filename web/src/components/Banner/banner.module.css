@@ -65,3 +65,21 @@
 .connectBtn {
   margin-left: auto;
 }
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-green);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logoIcon {
+  width: 120px;
+  height: 80px;
+  object-fit: contain;
+}
+
