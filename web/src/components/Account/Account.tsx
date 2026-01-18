@@ -12,7 +12,7 @@ import {
 import { parseUnits } from "viem";
 import client from "../../util/client";
 import { useDeposit, useWithdraw } from "../../hooks/useVaultContract";
-import { hyperEVM, hyperEVMTestnet } from "../../config/chains";
+import { hyperEVM } from "../../config/chains";
 
 import VaultBalances from "../VaultBalances/VaultBalances";
 import CurrentYield from "../CurrentYield/CurrentYield";
@@ -402,7 +402,7 @@ function AccountAuthed() {
               />
             </div>
 
-            <div className={s.modalHint}>Connected to HyperEVM Testnet</div>
+            <div className={s.modalHint}>Connected to HyperEVM</div>
           </div>
         </div>
       )}
