@@ -48,16 +48,10 @@ Users can withdraw their position at any time. To prevent "runs on the bank," De
 
 ## Technical Features
 
-* 
-**Fully On-chain Execution**: Custody, trade logic, and execution are entirely decentralized.
-
-
-* 
-**One-Click Cross-Chain Swaps**: Integrated with **Li.Fi** to allow users to bridge and swap from any chain into a hedged position in a single step.
-
-
-* 
-**Stochastic Risk Management**: The off-chain backend optimizes target leverage to minimize liquidation probability using recent volatility () and drift () data.
+* **Fully On-chain Execution**: Custody, trade logic, and execution are entirely decentralized - only possible with HyperEVM.
+* **One-Click Cross-Chain Swaps**: Integrated with **Li.Fi** to allow users to bridge and swap from any chain into a hedged position in a single step.
+* **Immediate withdrawals**: Withdraw the entire deposited liquidity in the same block!
+* [**Anti Withdrawal Curve**](https://www.desmos.com/calculator/pjyitv7ajr): "Haircut" fee applied to users withdrawing a large proportion of on-chain funds. Incentivises them waiting for later blocks when the contract has rebalanced. 
 
 
 
@@ -66,14 +60,7 @@ Users can withdraw their position at any time. To prevent "runs on the bank," De
 ## Development Summary
 
 * **Total Build Time**: 48 Hours (Hyperliquid Hackathon).
-* 
-**Stack**: Solidity (Forge), React/Vite, Arch Linux, Neovim.
-
-
-* 
-**Smart Contracts**: ~800 lines of Solidity (No AI usage).
-
-
-* 
-**Frontend**: ~6000 lines of React (AI assisted).
+* **Stack**: Solidity (Forge), React/Vite, Arch Linux, Neovim.
+* **Smart Contracts**: ~800 lines of Solidity (No AI usage).
+* **Frontend**: ~6000 lines of React (AI assisted).
 
