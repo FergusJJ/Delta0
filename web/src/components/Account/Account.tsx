@@ -5,7 +5,10 @@ import {
   MdOutlineArrowOutward,
 } from "react-icons/md";
 import { useActiveWallet, useConnectModal } from "thirdweb/react";
+import { parseUnits } from "viem";
 import client from "../../util/client";
+import { useDeposit, useWithdraw } from "../../hooks/useVaultContract";
+import { hyperEVMTestnet } from "../../config/chains";
 
 import VaultBalances from "../VaultBalances/VaultBalances";
 import CurrentYield from "../CurrentYield/CurrentYield";
@@ -66,6 +69,10 @@ export default function Account() {
 
 function AccountAuthed() {
   const [isLoading, setIsLoading] = useState(false);
+  const [chainId] = useState(hyperEVMTestnet.id); // Use testnet by default
+
+  const { deposit, isPending: isDepositing } = useDeposit(chainId);
+  const { withdraw, isPending: isWithdrawing } = useWithdraw(chainId);
 
   const [vaultHoldings, setVaultHoldings] = useState<VaultToken[]>([
     {
@@ -121,45 +128,58 @@ function AccountAuthed() {
   const handleWithdraw = () => openModal("withdraw");
   const handleCloseModal = () => setModalOpen(false);
 
-  const handleApplyAction = () => {
+  const handleApplyAction = async () => {
     const amt = Number(amountStr);
     if (!Number.isFinite(amt) || amt <= 0) return;
 
     const tokenMeta = TOKEN_CATALOG.find((t) => t.symbol === selectedSymbol);
     if (!tokenMeta) return;
 
-    setVaultHoldings((prev) => {
-      const idx = prev.findIndex((x) => x.symbol === tokenMeta.symbol);
-      const next = [...prev];
+    try {
+      const amountInWei = parseUnits(amountStr, 18);
 
       if (mode === "deposit") {
-        if (idx >= 0) {
-          next[idx] = { ...next[idx], amount: next[idx].amount + amt };
-        } else {
-          next.push({
-            symbol: tokenMeta.symbol,
-            address: tokenMeta.address,
-            amount: amt,
-          });
+        await deposit(amountInWei);
+      } else {
+        await withdraw(amountInWei);
+      }
+
+      // Update local state after successful transaction
+      setVaultHoldings((prev) => {
+        const idx = prev.findIndex((x) => x.symbol === tokenMeta.symbol);
+        const next = [...prev];
+
+        if (mode === "deposit") {
+          if (idx >= 0) {
+            next[idx] = { ...next[idx], amount: next[idx].amount + amt };
+          } else {
+            next.push({
+              symbol: tokenMeta.symbol,
+              address: tokenMeta.address,
+              amount: amt,
+            });
+          }
+          return next;
         }
+
+        if (idx < 0) return prev;
+
+        const current = next[idx].amount;
+        const newAmt = current - amt;
+
+        if (newAmt > 0) {
+          next[idx] = { ...next[idx], amount: newAmt };
+          return next;
+        }
+
+        next.splice(idx, 1);
         return next;
-      }
+      });
 
-      if (idx < 0) return prev;
-
-      const current = next[idx].amount;
-      const newAmt = current - amt;
-
-      if (newAmt > 0) {
-        next[idx] = { ...next[idx], amount: newAmt };
-        return next;
-      }
-
-      next.splice(idx, 1);
-      return next;
-    });
-
-    handleCloseModal();
+      handleCloseModal();
+    } catch (err) {
+      console.error("Transaction failed:", err);
+    }
   };
 
   const handleSymbolChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -172,8 +192,12 @@ function AccountAuthed() {
 
   const modalTitle =
     mode === "deposit" ? "Deposit to Vault" : "Withdraw from Vault";
-  const actionLabel =
-    mode === "deposit" ? "Confirm Deposit" : "Confirm Withdraw";
+  const isPending = isDepositing || isWithdrawing;
+  const actionLabel = isPending
+    ? "Confirming..."
+    : mode === "deposit"
+      ? "Confirm Deposit"
+      : "Confirm Withdraw";
 
   const depositLabel = "Deposit";
   const withdrawLabel = "Withdraw";
@@ -285,14 +309,14 @@ function AccountAuthed() {
               <button
                 className={mode === "deposit" ? s.primaryBtn : s.secondaryBtn}
                 onClick={handleApplyAction}
-                disabled={isAmountInvalid}
+                disabled={isAmountInvalid || isPending}
               >
                 {actionLabel}
               </button>
             </div>
 
             <div className={s.modalHint}>
-              Mock mode: updates UI only (no smart contract hooked up yet).
+              Connected to HyperEVM Testnet
             </div>
           </div>
         </div>
