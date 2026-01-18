@@ -36,6 +36,7 @@ contract PerpAccountMarginSummaryTest is Test {
         //CoreSimulatorLib.forcePerpBalance(user, 1000000e6);
 
         CoreSimulatorLib.forceAccountActivation(address(delta0_ETH));
+        CoreSimulatorLib.forceSpotBalance(address(delta0_ETH), 150, 200000000000000);
         //        CoreSimulatorLib.forcePerpLeverage(user, ETH_PERP, 10);
     }
 
@@ -109,7 +110,7 @@ contract PerpAccountMarginSummaryTest is Test {
         uint64 markPx2 = PrecompileLib.markPx(ETH_PERP);
         CoreSimulatorLib.setMarkPx(ETH_PERP, markPx2);
         vm.startPrank(owner);
-        CoreSimulatorLib.forceSpotBalance(address(delta0_ETH), 221, 56009914); // this number was emitted by contract below.
+        CoreSimulatorLib.forceSpotBalance(address(delta0_ETH), 221, 100000); // this number was emitted by contract below.
         (uint256 rv, uint256 rv2, bool nextRebisA) = delta0_ETH.rebalance(3, 1);
         console.log("stuff from first rebalancing tail", rv, rv2, nextRebisA);
 
@@ -120,6 +121,7 @@ contract PerpAccountMarginSummaryTest is Test {
         CoreSimulatorLib.nextBlock();
         uint256 USDClongDelta = L_0 - delta0_ETH.amountLongOnHyperEVM();
         console.log("USDC value of ETH reduced, ", USDClongDelta);
+        console.log("USDC on HyperCore", delta0_ETH.coreValueUSDC());
         console.log("amount short", delta0_ETH.amountShortOnHyperCore());
         console.log("amount long", delta0_ETH.amountLongOnHyperEVM());
         console.log("USDC AUM", delta0_ETH.totalUSDCValueUnderManagement());

@@ -24,9 +24,8 @@ contract Delta0_ETH is ERC20 {
     address public ACCOUNT_MARGIN_SUMMARY_PRECOMPILE_ADDRESS;
     IERC20 public Token; // the token being hedged
 
-    constructor(address owner, string memory Name, string memory Ticker) ERC20(Name, Ticker) {
-        RouterAddress = msg.sender;
-        Owner = owner;
+    constructor(string memory Name, string memory Ticker) ERC20(Name, Ticker) {
+        Owner = msg.sender;
         Token = IERC20(TokenAddress);
     }
 
@@ -191,7 +190,7 @@ contract Delta0_ETH is ERC20 {
         CoreWriterLib.transferUsdClass(perpAmountUSDCToRemove, false);
         CoreWriterLib.placeLimitOrder(
             spotdexindex,
-            true,
+            false,
             0,
             perpAmountUSDCToRemove / 1e2,
             false,
@@ -208,7 +207,8 @@ contract Delta0_ETH is ERC20 {
     }
 
     function decreaseShortSize(uint256 amount) internal returns (uint64) {
-        uint64 sz = uint64(amount * 10);
+        uint64 sz = uint64(amount / 10);
+        console.log("size of short decrease sent to hyperliquid", sz);
         CoreWriterLib.placeLimitOrder(perpdexindex, true, 0, sz, false, 3, uint128(block.timestamp) + 1);
         return sz;
     }
