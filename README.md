@@ -35,7 +35,7 @@ Yield is primarily generated from the **funding rate**. As short holders, the co
 ### 3. Smart Rebalancing
 
 Every EVM block, a `rebalance()` function is called. The protocol checks current spot and perp values and executes trades to maintain delta-neutrality based on a **Target Leverage** calculated off-chain.
-
+this is in two stages - rebalanceA() which increases/decreases collateral, and changes short size. When rebalance() is called next, rebalanceB() executes, either bridging ETH back to HyperEVM (if increasing leverage), or transferring the class of previously bridged HyperCore USDC to be margin collateral (when de-leveraging).
 ### 4. Liquidity & Withdrawals
 
 Users can withdraw their position at any time. To prevent "runs on the bank," Delta0 employs an **Anti-Run Withdrawal Curve**. If a withdrawal would dangerously deplete EVM liquidity, a "haircut" fee is applied to incentivize users to spread out withdrawals.
