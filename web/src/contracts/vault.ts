@@ -7,7 +7,7 @@ import { hyperEVM, hyperEVMTestnet } from "../config/chains";
 //   out/YourContract.sol/YourContract.json
 // Ensure you keep `as const` at the end for TypeScript type inference.
 //
-export type ContractSymbol = "SOL" | "ETH" | "BTC";
+export type ContractSymbol = "ETH";
 
 export const VAULT_ABI = [
   {
@@ -448,15 +448,11 @@ export const VAULT_ADDRESSES: Record<
 > = {
   // TODO: Set mainnet address after deploying to HyperEVM mainnet (chain ID 999)
   [hyperEVM.id]: {
-    ["SOL"]: "0x0",
     ["ETH"]: "0xbe6727b535545c67d5caa73dea54865b92cf7907",
-    ["BTC"]: "0x0",
   },
   // TODO: Set testnet address after deploying to HyperEVM testnet (chain ID 998)
   [hyperEVMTestnet.id]: {
-    ["SOL"]: "0x3Cf77F90024ad43eC32C44aEa94a207D1852B41A",
     ["ETH"]: "0x3D1C434D77754bF4324541B685C60cEff8C97A64",
-    ["BTC"]: "0x0",
   },
 };
 

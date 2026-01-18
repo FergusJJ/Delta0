@@ -3,6 +3,7 @@ import s from "./banner.module.css";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import client from "@util/client";
+import { hyperEVM } from "../../config/chains";
 
 type NavLinkProps = {
   location: string;
@@ -35,9 +36,8 @@ export default function Banner() {
           <NavItem location="/Account" label="Account" />
           <NavItem location="/bridge" label="Bridge" />
         </div>
-        <ConnectButton client={client} />
+        <ConnectButton client={client} chains={[hyperEVM]} />
       </div>
     </nav>
   );
 }
-

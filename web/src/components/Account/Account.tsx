@@ -21,7 +21,7 @@ import Button from "../Button/Button";
 import s from "./Account.module.css";
 import type { ContractSymbol } from "src/contracts/vault";
 import TokenNameAdressMapping from "@constants/tokens";
-import { ChainId } from "@lifi/sdk";
+import { ChainId, getTokenBalances } from "@lifi/sdk";
 import { useTokenPrices } from "../../hooks/useTokenPrices";
 import { sendVaultStatus } from "@components/Bridge/utils/balanceApi";
 
@@ -31,15 +31,24 @@ type VaultToken = {
   amount: number;
 };
 
-const TOKEN_CATALOG: Array<{ symbol: ContractSymbol; address: `0x${string}` }> =
-  [
-    //{ symbol: "SOL", address: TokenNameAdressMapping[ChainId.HYP]["USOL"] },
-    { symbol: "ETH", address: TokenNameAdressMapping[ChainId.HYP]["UETH"] },
-    //{ symbol: "BTC", address: TokenNameAdressMapping[ChainId.HYP]["UBTC"] },
-  ];
+const TOKEN_CATALOG: Array<{
+  symbol: ContractSymbol;
+  address: `0x${string}`;
+  decimals: number;
+}> = [
+  //{ symbol: "SOL", address: TokenNameAdressMapping[ChainId.HYP]["USOL"], decimals: 18 },
+  {
+    symbol: "ETH",
+    address: TokenNameAdressMapping[ChainId.HYP]["UETH"],
+    decimals: 18,
+  },
+  //{ symbol: "BTC", address: TokenNameAdressMapping[ChainId.HYP]["UBTC"], decimals: 18 },
+];
 
-const formatAmount = (x: number) =>
-  x.toLocaleString(undefined, { maximumFractionDigits: 6 });
+const formatAmount = (x: number) => {
+  console.log(x);
+  return x.toLocaleString(undefined, { maximumFractionDigits: 6 });
+};
 
 export default function Account() {
   const wallet = useActiveWallet();
@@ -104,21 +113,21 @@ function AccountAuthed() {
 
     const getBalances = async () => {
       const promises = [
-        sendVaultStatus({
-          tokenAddress: TokenNameAdressMapping[ChainId.HYP]["USOL"],
-          walletAddress: account.address as `0x${string}`,
-          amount: 0,
-        }),
+        //sendVaultStatus({
+        //  tokenAddress: TokenNameAdressMapping[ChainId.HYP]["USOL"],
+        //  walletAddress: account.address as `0x${string}`,
+        //  amount: 0,
+        //}),
         sendVaultStatus({
           tokenAddress: TokenNameAdressMapping[ChainId.HYP]["UETH"],
           walletAddress: account.address as `0x${string}`,
           amount: 0,
         }),
-        sendVaultStatus({
-          tokenAddress: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
-          walletAddress: account.address as `0x${string}`,
-          amount: 0,
-        }),
+        //sendVaultStatus({
+        //  tokenAddress: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
+        //  walletAddress: account.address as `0x${string}`,
+        //  amount: 0,
+        //}),
       ];
       const resp = await Promise.all(promises);
       setBalances(
@@ -135,32 +144,30 @@ function AccountAuthed() {
   }, [account]);
 
   // Derive vault holdings (USD values) from balances and prices
-  const vaultHoldings = useMemo<VaultToken[]>(
-    () => [
+  const vaultHoldings = useMemo<VaultToken[]>(() => {
+    const ethMeta = TOKEN_CATALOG.find((t) => t.symbol === "ETH");
+    const ethBalance = ethMeta
+      ? (balances[ethMeta.address] ?? 0) / 10 ** ethMeta.decimals
+      : 0;
+
+    return [
       //      {
       //        symbol: "SOL (in USDC)",
       //        address: TokenNameAdressMapping[ChainId.HYP]["USOL"],
-      //        amount:
-      //          (balances[TokenNameAdressMapping[ChainId.HYP]["USOL"]] ?? 0) *
-      //          (prices["SOL"] ?? 0),
+      //        amount: solBalance * (prices["SOL"] ?? 0),
       //      },
       {
         symbol: "ETH (in USDC)",
         address: TokenNameAdressMapping[ChainId.HYP]["UETH"],
-        amount:
-          (balances[TokenNameAdressMapping[ChainId.HYP]["UETH"]] ?? 0) *
-          (prices["ETH"] ?? 0),
+        amount: ethBalance * (prices["ETH"] ?? 0),
       },
       //      {
       //        symbol: "BTC (in USDC)",
       //        address: TokenNameAdressMapping[ChainId.HYP]["UBTC"],
-      //        amount:
-      //          (balances[TokenNameAdressMapping[ChainId.HYP]["UBTC"]] ?? 0) *
-      //          (prices["BTC"] ?? 0),
+      //        amount: btcBalance * (prices["BTC"] ?? 0),
       //      },
-    ],
-    [balances, prices],
-  );
+    ];
+  }, [balances, prices]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [mode, setMode] = useState<"deposit" | "withdraw">("deposit");
@@ -242,7 +249,7 @@ function AccountAuthed() {
 
   const handleSymbolChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
-    if (val !== "SOL" && val !== "BTC" && val !== "ETH") {
+    if (val !== "ETH") {
       return;
     }
     setSelectedSymbol(val);
@@ -256,12 +263,41 @@ function AccountAuthed() {
     mode === "deposit" ? "Deposit to Vault" : "Withdraw from Vault";
   const isPending = isDepositing || isWithdrawing;
 
-  // Get the balance for the currently selected token in the modal
-  const selectedTokenBalance = useMemo(() => {
-    const tokenMeta = TOKEN_CATALOG.find((t) => t.symbol === selectedSymbol);
-    if (!tokenMeta) return 0;
-    return balances[tokenMeta.address] ?? 0;
-  }, [selectedSymbol, balances]);
+  const [selectedTokenBalance, setSelectedTokenBalance] = useState(0);
+
+  useEffect(() => {
+    if (!account?.address) {
+      setSelectedTokenBalance(0);
+      return;
+    }
+
+    const fetchBalance = async () => {
+      const tok = {
+        chainId: 999,
+        address: "0xbe6727b535545c67d5caa73dea54865b92cf7907",
+        symbol: "UETH",
+        name: "UETH",
+        decimals: 18,
+        priceUSD: "0",
+      };
+      try {
+        const result = await getTokenBalances(account.address, [tok]);
+        if (result && result.length > 0) {
+          const tokenData = result[0];
+          const rawBalance = BigInt(tokenData.amount ?? "0");
+          const decimals = tokenData.decimals ?? 18;
+          const balance = Number(rawBalance) / 10 ** decimals;
+          setSelectedTokenBalance(balance);
+        }
+      } catch (err) {
+        console.error("Failed to fetch token balance:", err);
+        setSelectedTokenBalance(0);
+      }
+    };
+
+    void fetchBalance();
+  }, [account?.address, selectedSymbol]);
+
   const actionLabel = isPending
     ? "Confirming..."
     : mode === "deposit"

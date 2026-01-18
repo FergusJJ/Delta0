@@ -2,7 +2,6 @@ import { type WidgetConfig, ChainId, type BaseToken } from "@lifi/widget";
 import { INTEGRATOR } from "../constants/hyperbridge";
 //import { TestnetChainId } from "../constants/chains";
 import TokenNameAddressMapping from "@constants/tokens";
-import TokenNameAdressMapping from "@constants/tokens";
 /*
  *
  * To chains:
@@ -15,18 +14,18 @@ const tokenWhitelist: BaseToken[] = [
     address: TokenNameAddressMapping[ChainId.HYP].UETH,
     chainId: ChainId.HYP,
   },
-  {
-    address: TokenNameAddressMapping[ChainId.HYP].USOL,
-    chainId: ChainId.HYP,
-  },
-  {
-    address: TokenNameAdressMapping[ChainId.HYP].UBTC,
-    chainId: ChainId.HYP,
-  },
-  {
-    address: TokenNameAdressMapping[ChainId.HYP].WHYPE,
-    chainId: ChainId.HYP,
-  },
+  //{
+  //  address: TokenNameAddressMapping[ChainId.HYP].USOL,
+  //  chainId: ChainId.HYP,
+  //},
+  //{
+  //  address: TokenNameAdressMapping[ChainId.HYP].UBTC,
+  //  chainId: ChainId.HYP,
+  //},
+  //{
+  //  address: TokenNameAdressMapping[ChainId.HYP].WHYPE,
+  //  chainId: ChainId.HYP,
+  //},
 ];
 
 // Docs: https://docs.li.fi/widget/configure-widget
